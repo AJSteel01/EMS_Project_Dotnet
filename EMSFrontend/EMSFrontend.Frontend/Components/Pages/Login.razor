@@ -40,7 +40,7 @@
 
     private async Task HandleLogin()
     {
-        // Must be relative and WITHOUT slash
+
         var response = await Http.PostAsJsonAsync("auth/login", login);
 
         if (!response.IsSuccessStatusCode)

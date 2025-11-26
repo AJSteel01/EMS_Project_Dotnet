@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "afImAZto1JM=",
+  "dgSpecHash": "LL9KjFZS8VE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
+  "projectFilePath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\abhigyan.jha\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.0-rc.2.25502.107\\microsoft.aspnetcore.app.internal.assets.10.0.0-rc.2.25502.107.nupkg.sha512"
   ],

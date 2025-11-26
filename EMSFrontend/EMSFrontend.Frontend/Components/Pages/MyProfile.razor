@@ -84,7 +84,7 @@ else
         emp = await EmployeesClient.GetEmployeeAsync(User.EmployeeId.Value);
         departments = await DepartmentsClient.GetDepartmentsAsync();
 
-        // Assign DepartmentName separately (Avoid null warnings)
+
         var dept = departments?.FirstOrDefault(d => d.Id == emp!.DepartmentId);
         departmentName = dept?.Name ?? "Not Assigned";
     }

@@ -24,7 +24,7 @@ builder.Services.AddHttpClient("EMSApi", c =>
 {
     UseCookies = true,
     CookieContainer = cookieContainer,
-    AllowAutoRedirect = false     // ⬅️ IMPORTANT (avoid 302 → 405)
+    AllowAutoRedirect = false
 });
 
 // Make Http available via DI

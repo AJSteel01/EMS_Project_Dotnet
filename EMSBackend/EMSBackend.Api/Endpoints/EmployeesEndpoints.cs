@@ -15,9 +15,9 @@ public static class EmployeesEndpoints
     {
         var group = app.MapGroup("/employees");
 
-        // =============================
+
         // GET /employees — Admin Only
-        // =============================
+
         group.MapGet("/", async (
             EMSDbContext db,
             string? search,
@@ -54,11 +54,11 @@ public static class EmployeesEndpoints
         .RequireAuthorization("AdminOnly"); // Only Admin can view list
 
 
-        // =============================
+
         // GET /employees/{id}
         // Admin → can view anyone
         // Employee → can view ONLY own record
-        // =============================
+
         group.MapGet("/{id}", async (
             int id,
             EMSDbContext db,
@@ -77,7 +77,7 @@ public static class EmployeesEndpoints
             if (user is null)
                 return Results.Unauthorized();
 
-            // If user is Employee, enforce self-access only
+            // If user is Employee, then self-access only
             bool isEmployee = await userManager.IsInRoleAsync(user, "Employee");
 
             if (isEmployee && user.EmployeeId != id)
@@ -88,9 +88,9 @@ public static class EmployeesEndpoints
         .RequireAuthorization();
 
 
-        // =============================
+
         // POST /employees — ADMIN only
-        // =============================
+
         group.MapPost("/", async (EmployeeCreateDto dto, EMSDbContext db) =>
         {
             if (!await db.Departments.AnyAsync(d => d.Id == dto.DepartmentId))
@@ -104,12 +104,10 @@ public static class EmployeesEndpoints
         })
         .RequireAuthorization("AdminOnly");
 
-
-        // =============================
         // PUT /employees/{id}
-        // Admin → can update all fields  
-        // Employee → can ONLY update phone + address  
-        // =============================
+        // Admin -> can update all fields  
+        // Employee -> can ONLY update phone + address  
+
         group.MapPut("/{id}", async (
             int id,
             EmployeeUpdateDto dto,
@@ -128,7 +126,7 @@ public static class EmployeesEndpoints
             bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
             bool isEmployee = await userManager.IsInRoleAsync(user, "Employee");
 
-            // EMPLOYEE RESTRICTION: Only update their own phone & address
+            // EMPLOYEE restrict: to Only update their own phone & address
             if (isEmployee)
             {
                 if (user.EmployeeId != id)
@@ -152,10 +150,10 @@ public static class EmployeesEndpoints
         })
         .RequireAuthorization();
 
-        // =============================
+
         // PUT /employees/self
         // Employee updates phone/address ONLY
-        // =============================
+
         group.MapPut("/self", async (
             EmployeeProfileUpdateDto dto,
             EMSDbContext db,
@@ -179,9 +177,9 @@ public static class EmployeesEndpoints
         })
         .RequireAuthorization("EmployeeOnly");
 
-        // =============================
+
         // DELETE /employees/{id} — Admin only
-        // =============================
+
         group.MapDelete("/{id}", async (int id, EMSDbContext db) =>
         {
             await db.Employees.Where(e => e.EmpId == id).ExecuteDeleteAsync();

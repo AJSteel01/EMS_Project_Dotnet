@@ -10,7 +10,6 @@ public class EmployeeSummary
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    // to map the department NAME from backend
     [JsonPropertyName("department")]
     public string Department { get; set; } = string.Empty;
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj": {}
+    "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj": {
+    "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
+        "projectUniqueName": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
         "projectName": "EMSFrontend.Frontend",
-        "projectPath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
+        "projectPath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\EMSFrontend.Frontend.csproj",
         "packagesPath": "C:\\Users\\abhigyan.jha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMSFrontend\\EMSFrontend.Frontend\\obj\\",
+        "outputPath": "C:\\Users\\abhigyan.jha\\DotNetTraining\\EMS\\EMSFrontend\\EMSFrontend.Frontend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -24,7 +24,7 @@ public class EmployeesClient
     }
 
 
-    // OLD Endpoint (still kept if any component uses it)
+    // Old Endpoint 
     public async Task<EmployeeSummary[]> GetEmployeesAsync()
         => await _http.GetFromJsonAsync<EmployeeSummary[]>("/employees", _options)
            ?? Array.Empty<EmployeeSummary>();

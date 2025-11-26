@@ -23,7 +23,7 @@ public class UserContext
     {
         try
         {
-            // NO LEADING SLASH — VERY IMPORTANT
+        
             var result = await _http.GetFromJsonAsync<UserInfo>("auth/me");
 
             if (result == null)

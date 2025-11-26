@@ -98,7 +98,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Load user info FIRST
+        // To Load user info FIRST
         await User.LoadAsync();
 
         if (!User.IsLoggedIn)

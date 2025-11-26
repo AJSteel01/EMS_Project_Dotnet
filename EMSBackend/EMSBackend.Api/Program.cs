@@ -5,21 +5,21 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ------------------ DB Contexts -----------------------
+//  DB Contexts 
 builder.Services.AddDbContext<EMSDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EMS")));
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDB")));
 
-// ------------------ Identity -----------------------
+//  Identity 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 // builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 //     .AddCookie(IdentityConstants.ApplicationScheme);
 
-// ------------------ Cookie Paths -----------------------
+// Cookie Paths 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
     opt.LoginPath = "/auth/login";
@@ -27,10 +27,10 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.AccessDeniedPath = "/auth/denied";
 });
 
-// ------------------ AUTHORIZATION POLICIES -----------------------
+//  Authorization Policies 
 builder.Services.AddAuthorization(options =>
 {
-    // POLICY REQUIRED IN YOUR ENDPOINTS
+    // POLICY REQUIRED IN ENDPOINTS
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("Admin"));
 
@@ -41,19 +41,19 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// ------------------ Middleware -----------------------
+// Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ------------------ Endpoints -----------------------
+// Endpoints 
 app.MapEmployeesEndpoints();
 app.MapDepartmentsEndpoints();
 app.MapAuthEndpoints();
 
-// ------------------ MIGRATIONS + SEEDING -----------------------
+//  MIGRATIONS and SEEDING 
 await app.MigrateDbAsync();
 await app.SeedDefaultRolesAsync();
 await app.SeedAdminAsync();
 
-// ------------------ Run -----------------------
+
 app.Run();

@@ -23,7 +23,7 @@ public static class AuthEndpoints
                     return Results.BadRequest("EmployeeId is required for Employee role.");
 
                 bool exists = await db.Employees
-                    .AnyAsync(e => e.EmpId == request.EmployeeId.Value); // EF AnyAsync works now
+                    .AnyAsync(e => e.EmpId == request.EmployeeId.Value);
 
                 if (!exists)
                     return Results.BadRequest("Invalid EmployeeId. Employee does not exist.");
@@ -55,7 +55,7 @@ public static class AuthEndpoints
     SignInManager<ApplicationUser> signInManager) =>
 {
     var result = await signInManager.PasswordSignInAsync(
-        userName: request.Email,   // must match user.UserName
+        userName: request.Email,   
         password: request.Password,
         isPersistent: true,
         lockoutOnFailure: false);
