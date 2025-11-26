@@ -1,0 +1,14 @@
+# Backend ignores
+backend/bin/
+backend/obj/
+backend/.vs/
+
+# Frontend ignores
+frontend/bin/
+frontend/obj/
+frontend/node_modules/
+
+# Common ignores
+*.user
+*.log
+*.DS_Store

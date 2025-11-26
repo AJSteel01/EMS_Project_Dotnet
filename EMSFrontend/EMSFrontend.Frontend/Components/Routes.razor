@@ -1,0 +1,32 @@
+﻿@inject UserContext User
+@rendermode InteractiveServer
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        @if (!loaded)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            <RouteView RouteData="routeData" 
+                       DefaultLayout="typeof(Layout.MainLayout)" />
+        }
+    </Found>
+
+    <NotFound>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <p>Sorry, page not found.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    bool loaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await User.LoadAsync();
+        loaded = true;
+    }
+}

@@ -1,0 +1,65 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject UserContext User
+
+
+<h3>Login</h3>
+
+<div class="card p-4 col-md-4">
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    <EditForm Model="@login"
+              OnValidSubmit="HandleLogin"
+              FormName="loginForm"
+              @onsubmit:preventDefault>
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label>Email</label>
+            <InputText class="form-control" @bind-Value="login.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label>Password</label>
+            <InputText type="password" class="form-control" @bind-Value="login.Password" />
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">Login</button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginRequest login = new();
+    private string? error;
+
+    private async Task HandleLogin()
+    {
+        // Must be relative and WITHOUT slash
+        var response = await Http.PostAsJsonAsync("auth/login", login);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            error = "Invalid email or password";
+            return;
+        }
+
+        await User.LoadAsync();
+
+        if (User.IsAdmin)
+            Navigation.NavigateTo("/", true);
+        else if (User.IsEmployee)
+            Navigation.NavigateTo("/myprofile", true);
+    }
+
+    public class LoginRequest
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

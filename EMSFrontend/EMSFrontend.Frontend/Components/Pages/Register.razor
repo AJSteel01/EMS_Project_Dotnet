@@ -1,0 +1,78 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@inject UserContext User
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@if (!User.IsAdmin)
+{
+    Navigation.NavigateTo("/denied", true);
+    return;
+}
+
+<h3>Create User</h3>
+
+<div class="card p-4 col-md-5">
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+
+    <EditForm Model="@model" OnValidSubmit="CreateUser" FormName="registerForm">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label>Email</label>
+            <InputText class="form-control" @bind-Value="model.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label>Password</label>
+            <InputText type="password" class="form-control" @bind-Value="model.Password" />
+        </div>
+
+        <div class="mb-3">
+            <label>Full Name</label>
+            <InputText class="form-control" @bind-Value="model.FullName" />
+        </div>
+
+        <div class="mb-3">
+            <label>Role</label>
+            <InputSelect class="form-select" @bind-Value="model.Role">
+                <option value="Admin">Admin</option>
+                <option value="Employee">Employee</option>
+            </InputSelect>
+        </div>
+
+        @if (model.Role == "Employee")
+        {
+            <div class="mb-3">
+                <label>Employee Id</label>
+                <InputNumber class="form-control" @bind-Value="model.EmployeeId" />
+            </div>
+        }
+
+        <button class="btn btn-primary w-100">Create</button>
+    </EditForm>
+</div>
+
+@code {
+    string? message;
+    RegisterRequest model = new();
+
+    private async Task CreateUser()
+    {
+        var res = await Http.PostAsJsonAsync("/auth/register", model);
+        message = res.IsSuccessStatusCode ? "User created!" : "Error creating user";
+    }
+
+    public class RegisterRequest
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
+        public string FullName { get; set; } = "";
+        public string Role { get; set; } = "Employee";
+        public int? EmployeeId { get; set; }
+    }
+}

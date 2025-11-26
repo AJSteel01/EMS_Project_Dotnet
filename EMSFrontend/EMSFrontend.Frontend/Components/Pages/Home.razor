@@ -1,0 +1,150 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@using EMSFrontend.Frontend.Models
+@inject EMSFrontend.Frontend.Clients.EmployeesClient Client
+@inject UserContext User
+@inject NavigationManager Navigation
+
+<PageTitle>Employees</PageTitle>
+
+@if (employees is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Employees</h3>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input class="form-control"
+                   placeholder="Search by name or department..."
+                   @bind="searchText"
+                   @bind:event="oninput" />
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary" @onclick="LoadEmployees">Search</button>
+        </div>
+
+        <div class="col-md-6 text-end">
+            <a href="/editemployee" class="btn btn-success">Add Employee</a>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Salary</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var e in employees)
+            {
+                <tr>
+                    <td>@e.EmpId</td>
+                    <td>@e.Name</td>
+                    <td>@e.Department</td>
+                    <td>@e.Salary</td>
+                    <td>
+                        <a href="/editemployee/@e.EmpId" class="btn btn-primary btn-sm">Edit</a>
+
+                        <button class="btn btn-danger btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="@($"#deleteModal-{e.EmpId}")">
+                            Delete
+                        </button>
+
+                        <DeleteEmployee Emp="@e" OnDeleted="ReloadAsync" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between mt-3">
+        <button class="btn btn-outline-secondary"
+                disabled="@(!HasPreviousPage)"
+                @onclick="PreviousPage">
+            Previous
+        </button>
+
+        <span>Page @currentPage</span>
+
+        <button class="btn btn-outline-secondary"
+                disabled="@(!HasNextPage)"
+                @onclick="NextPage">
+            Next
+        </button>
+    </div>
+}
+
+@code {
+    private EmployeeSummary[] employees = [];
+    private int totalCount = 0;
+
+    private string searchText = "";
+    private int currentPage = 1;
+    private int pageSize = 5;
+
+    private bool HasPreviousPage => currentPage > 1;
+    private bool HasNextPage => currentPage * pageSize < totalCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load user info FIRST
+        await User.LoadAsync();
+
+        if (!User.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/login", true);
+            return;
+        }
+
+        if (!User.IsAdmin)
+        {
+            Navigation.NavigateTo("/denied", true);
+            return;
+        }
+
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
+        var response = await Client.GetEmployeesPagedAsync(searchText, currentPage, pageSize);
+
+        employees = response.Items.ToArray();
+        totalCount = response.TotalCount;
+    }
+
+    private async Task ReloadAsync()
+    {
+        await LoadEmployees();
+        StateHasChanged();
+    }
+
+    private async Task PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadEmployees();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (HasNextPage)
+        {
+            currentPage++;
+            await LoadEmployees();
+        }
+    }
+}

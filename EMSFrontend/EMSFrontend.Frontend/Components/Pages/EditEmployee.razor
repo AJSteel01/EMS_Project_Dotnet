@@ -1,0 +1,136 @@
+﻿@rendermode InteractiveServer
+@page "/editemployee"
+@page "/editemployee/{Id:int}"
+@inject NavigationManager NavigationManager
+@inject EMSFrontend.Frontend.Clients.EmployeesClient EmployeesClient
+@inject EMSFrontend.Frontend.Clients.DepartmentsClient DepartmentsClient
+@using EMSFrontend.Frontend.Models
+
+
+<PageTitle>@title</PageTitle>
+<h3>@title</h3>
+
+@if (departments is null || employee is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+
+            <EditForm Model="@employee"
+                      FormName="editEmployee"
+                      OnValidSubmit="HandleSubmitAsync"
+                      Enhance>
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="employee.Name" />
+                    <ValidationMessage For="()=>employee.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <InputText class="form-control" @bind-Value="employee.Email" />
+                    <ValidationMessage For="()=>employee.Email" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <InputSelect class="form-select" @bind-Value="employee.DepartmentId">
+                        <option value="">Select Department</option>
+                        @foreach (var d in departments)
+                        {
+                            <option value="@d.Id">@d.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="()=>employee.DepartmentId" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Salary</label>
+                    <InputNumber class="form-control" @bind-Value="employee.Salary" />
+                    <ValidationMessage For="()=>employee.Salary" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Date Of Joining</label>
+                    <InputDate class="form-control" @bind-Value="employee.DateOfJoining" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <InputText class="form-control" @bind-Value="employee.Phone" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <InputText class="form-control" @bind-Value="employee.Address" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a role="button" class="btn btn-danger" href="/">Cancel</a>
+
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private EmployeeDetails? employee { get; set; }
+
+    private Department[]? departments;
+    private string title = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (employee is not null)
+            return;
+
+        if (Id is not null)
+        {
+            employee = await EmployeesClient.GetEmployeeAsync(Id.Value);
+            title = $"Edit {employee.Name}";
+        }
+        else
+        {
+            employee = new EmployeeDetails
+            {
+                Name = string.Empty,
+                Email = string.Empty,
+                DateOfJoining = DateOnly.FromDateTime(DateTime.UtcNow)
+            };
+
+            title = "New Employee";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        departments = await DepartmentsClient.GetDepartmentsAsync();
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        ArgumentNullException.ThrowIfNull(employee);
+
+        if (Id is null)
+        {
+            await EmployeesClient.AddEmployeeAsync(employee);
+        }
+        else
+        {
+            employee.EmpId = Id.Value;
+            await EmployeesClient.UpdateEmployeeAsync(employee);
+        }
+
+        NavigationManager.NavigateTo("/",true);
+    }
+}

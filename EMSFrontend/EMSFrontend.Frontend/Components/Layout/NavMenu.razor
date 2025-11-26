@@ -1,0 +1,45 @@
+﻿@inject UserContext User
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<nav class="navbar navbar-dark bg-dark navbar-expand px-3">
+
+    <a class="navbar-brand" href="/">EMS</a>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+
+            @if (User.IsAdmin)
+            {
+                <li class="nav-item"><a class="nav-link" href="/">Employees</a></li>
+                <li class="nav-item"><a class="nav-link" href="/editemployee">Add Employee</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register">Register User</a></li>
+            }
+
+            @if (User.IsEmployee)
+            {
+                <li class="nav-item"><a class="nav-link" href="/myprofile">My Profile</a></li>
+            }
+
+        </ul>
+
+        @if (User.IsLoggedIn)
+        {
+            <span class="text-light me-2">Hello @User.FullName</span>
+            <button class="btn btn-outline-light" @onclick="Logout">Logout</button>
+        }
+        @* else
+        {
+            <a href="/login" class="btn btn-outline-light">Login</a>
+        } *@
+    </div>
+</nav>
+
+@code {
+    private async Task Logout()
+    {
+        await Http.PostAsync("/auth/logout", null);
+        await User.LoadAsync();
+        Navigation.NavigateTo("/", true);
+    }
+}

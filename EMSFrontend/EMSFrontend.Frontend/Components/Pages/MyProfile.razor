@@ -1,0 +1,116 @@
+﻿@page "/myprofile"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+@using EMSFrontend.Frontend.Models
+@inject UserContext User
+@inject NavigationManager Navigation
+@inject EmployeesClient EmployeesClient
+@inject DepartmentsClient DepartmentsClient
+
+@if (!User.IsEmployee)
+{
+    Navigation.NavigateTo("/denied", true);
+}
+
+<h3>My Profile</h3>
+
+@if (emp is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card p-4 col-md-5">
+
+        <EditForm Model="@emp" OnValidSubmit="Save">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label>Name</label>
+                <InputText class="form-control" @bind-Value="emp.Name" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label>Email</label>
+                <InputText class="form-control" @bind-Value="emp.Email" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label>Department</label>
+
+                <input class="form-control" value="@departmentName" disabled />
+            </div>
+            <div class="mb-3">
+                <label>Salary</label>
+                <InputNumber class="form-control" @bind-Value="emp.Salary" disabled />
+            </div>
+            <div class="mb-3">
+                <label>Date Of Joining</label>
+                <InputDate class="form-control" @bind-Value="emp.DateOfJoining" disabled />
+            </div>
+
+
+
+            <div class="mb-3">
+                <label>Phone</label>
+                <InputText class="form-control" @bind-Value="emp.Phone" />
+            </div>
+
+            <div class="mb-3">
+                <label>Address</label>
+                <InputText class="form-control" @bind-Value="emp.Address" />
+            </div>
+
+            <button class="btn btn-primary">Save</button>
+        </EditForm>
+
+    </div>
+}
+
+@code {
+    private EmployeeDetails? emp;
+    private Department[]? departments;
+    private string? departmentName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (User.EmployeeId is null)
+        {
+            Navigation.NavigateTo("/login", true);
+            return;
+        }
+
+        emp = await EmployeesClient.GetEmployeeAsync(User.EmployeeId.Value);
+        departments = await DepartmentsClient.GetDepartmentsAsync();
+
+        // Assign DepartmentName separately (Avoid null warnings)
+        var dept = departments?.FirstOrDefault(d => d.Id == emp!.DepartmentId);
+        departmentName = dept?.Name ?? "Not Assigned";
+    }
+
+
+
+    private async Task Save()
+    {
+        if (emp is null)
+            return;
+
+        var dto = new SelfUpdateRequest
+        {
+            Phone = emp.Phone,
+            Address = emp.Address
+        };
+
+        await EmployeesClient.UpdateSelfAsync(dto);
+
+        if (User.IsAdmin)
+        {
+            await EmployeesClient.UpdateDepartmentAsync(emp!.EmpId, emp.DepartmentId);
+        }
+
+        Navigation.NavigateTo("/myprofile", true);
+    }
+
+
+}

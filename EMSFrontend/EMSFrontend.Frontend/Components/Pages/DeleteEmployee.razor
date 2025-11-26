@@ -1,0 +1,71 @@
+﻿@inject EMSFrontend.Frontend.Clients.EmployeesClient Client
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<!-- Modal -->
+<div class="modal fade"
+     id="@GetModalId(Emp)"
+     tabindex="-1"
+     aria-labelledby="deleteModalLabel"
+     aria-hidden="true">
+
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">@title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal">
+            Cancel
+        </button>
+
+        <button type="button"
+                class="btn btn-danger"
+                data-bs-dismiss="modal"
+                @onclick="ConfirmAsync">
+            Delete
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@code {
+    // REQUIRED PARAMETERS
+    [Parameter]
+    public required EmployeeSummary Emp { get; set; }
+
+    // THIS WAS MISSING — ADD IT
+    [Parameter]
+    public EventCallback OnDeleted { get; set; }
+
+    private string title = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        title = $"Delete {Emp.Name}";
+    }
+
+    public static string GetModalId(EmployeeSummary emp)
+        => $"deleteModal-{emp.EmpId}";
+
+    private async Task ConfirmAsync()
+    {
+        await Client.DeleteEmployeeAsync(Emp.EmpId);
+
+        if (OnDeleted.HasDelegate)
+        {
+            await OnDeleted.InvokeAsync();
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+    }
+}
