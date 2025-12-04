@@ -218,3 +218,4 @@ C:\Users\abhigyan.jha\DotNetTraining\EMS\EMSBackend\EMSBackend.Api\obj\Debug\net
 C:\Users\abhigyan.jha\DotNetTraining\EMS\EMSBackend\EMSBackend.Api\obj\Debug\net10.0\EMSBackend.Api.pdb
 C:\Users\abhigyan.jha\DotNetTraining\EMS\EMSBackend\EMSBackend.Api\obj\Debug\net10.0\EMSBackend.Api.genruntimeconfig.cache
 C:\Users\abhigyan.jha\DotNetTraining\EMS\EMSBackend\EMSBackend.Api\obj\Debug\net10.0\ref\EMSBackend.Api.dll
+C:\Users\abhigyan.jha\DotNetTraining\EMS\EMSBackend\EMSBackend.Api\obj\Debug\net10.0\EMSBackend.Api.sourcelink.json

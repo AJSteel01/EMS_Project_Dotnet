@@ -37,9 +37,24 @@ public class EmployeesClient
     return emp;
 }
 
+public async Task AddEmployeeAsync(EmployeeDetails employee)
+{
+    var dto = new
+    {
+        Name = employee.Name,
+        Email = employee.Email,
+        Salary = employee.Salary,
+        DateOfJoining = employee.DateOfJoining,
+        Phone = employee.Phone,
+        Address = employee.Address,
+        DepartmentId = employee.DepartmentId
+    };
 
-    public async Task AddEmployeeAsync(EmployeeDetails employee)
-        => await _http.PostAsJsonAsync("/employees", employee, _options);
+    await _http.PostAsJsonAsync("/employees", dto);
+}
+
+    // public async Task AddEmployeeAsync(EmployeeDetails employee)
+    //     => await _http.PostAsJsonAsync("/employees", employee, _options);
 
     public async Task UpdateEmployeeAsync(EmployeeDetails employee)
         => await _http.PutAsJsonAsync($"/employees/{employee.EmpId}", employee, _options);

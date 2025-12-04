@@ -2,10 +2,9 @@
 @page "/editemployee"
 @page "/editemployee/{Id:int}"
 @inject NavigationManager NavigationManager
-@inject EMSFrontend.Frontend.Clients.EmployeesClient EmployeesClient
-@inject EMSFrontend.Frontend.Clients.DepartmentsClient DepartmentsClient
+@inject EmployeesClient EmployeesClient
+@inject DepartmentsClient DepartmentsClient
 @using EMSFrontend.Frontend.Models
-
 
 <PageTitle>@title</PageTitle>
 <h3>@title</h3>
@@ -20,8 +19,8 @@ else
         <div class="col-md-6">
 
             <EditForm Model="@employee"
-                      FormName="editEmployee"
                       OnValidSubmit="HandleSubmitAsync"
+                      OnInvalidSubmit="ShowErrors"
                       Enhance>
 
                 <DataAnnotationsValidator />
@@ -42,7 +41,7 @@ else
                 <div class="mb-3">
                     <label class="form-label">Department</label>
                     <InputSelect class="form-select" @bind-Value="employee.DepartmentId">
-                        <option value="">Select Department</option>
+                        <option value="">Select department</option>
                         @foreach (var d in departments)
                         {
                             <option value="@d.Id">@d.Name</option>
@@ -60,21 +59,28 @@ else
                 <div class="mb-3">
                     <label class="form-label">Date Of Joining</label>
                     <InputDate class="form-control" @bind-Value="employee.DateOfJoining" />
+                    <ValidationMessage For="()=>employee.DateOfJoining" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Phone</label>
                     <InputText class="form-control" @bind-Value="employee.Phone" />
+                    <ValidationMessage For="()=>employee.Phone" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Address</label>
                     <InputText class="form-control" @bind-Value="employee.Address" />
+                    <ValidationMessage For="()=>employee.Address" />
                 </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
 
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <a role="button" class="btn btn-danger" href="/">Cancel</a>
-
             </EditForm>
         </div>
     </div>
@@ -83,16 +89,14 @@ else
 @code {
     [Parameter] public int? Id { get; set; }
 
-    [SupplyParameterFromForm]
     private EmployeeDetails? employee { get; set; }
-
     private Department[]? departments;
     private string title = string.Empty;
+    private string? errorMessage;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (employee is not null)
-            return;
+        if (employee is not null) return;
 
         if (Id is not null)
         {
@@ -107,7 +111,6 @@ else
                 Email = string.Empty,
                 DateOfJoining = DateOnly.FromDateTime(DateTime.UtcNow)
             };
-
             title = "New Employee";
         }
     }
@@ -117,20 +120,31 @@ else
         departments = await DepartmentsClient.GetDepartmentsAsync();
     }
 
+    private void ShowErrors()
+    {
+        errorMessage = "Please correct the highlighted errors.";
+    }
+
     private async Task HandleSubmitAsync()
     {
         ArgumentNullException.ThrowIfNull(employee);
 
-        if (Id is null)
+        errorMessage = null;
+
+        if (employee.DepartmentId == 0)
         {
-            await EmployeesClient.AddEmployeeAsync(employee);
+            errorMessage = "Please select a department before saving.";
+            return;
         }
+
+        if (Id is null)
+            await EmployeesClient.AddEmployeeAsync(employee);
         else
         {
             employee.EmpId = Id.Value;
             await EmployeesClient.UpdateEmployeeAsync(employee);
         }
 
-        NavigationManager.NavigateTo("/",true);
+        NavigationManager.NavigateTo("/", true);
     }
 }
